@@ -1,22 +1,19 @@
 const mongoose = require('mongoose');
-const dotenv = require('dotenv').config({ path: 'config/.env' });
-
-mongoose.connect(process.env.MONGO_URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  // Specify the correct write concern mode here
-  // For example, 'majority' or a specific number like 3
-  writeConcern: {
-    w: 'majority'
+const dotenv = require('dotenv').config({ path: '/.env' });
+const Database  = process.env.MONGO_URL;
+//connect to the database
+const connectDB = async () => {
+  try {
+    await mongoose.connect('mongodb://127.0.0.1:27017/connectify', {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log('Successfully connected to the database');
+    return mongoose.connection;
+  } catch (err) {
+    console.error(err.message);
+    process.exit(1);
   }
-});
+};
 
-const db = mongoose.connection;
-
-db.on('error', console.error.bind(console, 'Error in connecting to MongoDB'));
-
-db.once('open', function () {
-  console.log('Connected to Database :: Mongodb');
-});
-
-module.exports = db;
+module.exports = connectDB;
